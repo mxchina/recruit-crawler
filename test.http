@@ -1,0 +1,16 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+GET https://fe-api.zhaopin.com/c/i/sou?pageSize=90&cityId=551&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=%E8%BF%90%E7%BB%B4&kt=3&_v=0.07826219&x-zp-page-request-id=133a5213903d4e5fbfc601595283bdd9-1551362993438-539926 HTTP/1.1
+
+###
+
+
+GET https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wwf51b2091e9e0d51d&corpsecret=LxTHd5MOZU4H6bYijzTqnv_a1qBB9Luq7p3u7f4cT5I HTTP/1.1
+
+###
+
