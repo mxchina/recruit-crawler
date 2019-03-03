@@ -1,8 +1,8 @@
 package saver
 
 import (
-	"20181022/crawler/types"
-	"20181022/crawler/utils"
+	"20181022/recruit-crawler/types"
+	"20181022/recruit-crawler/utils"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"

@@ -1,7 +1,7 @@
 package types
 
 import (
-	"20181022/crawler/utils"
+	"20181022/recruit-crawler/utils"
 	"github.com/json-iterator/go"
 	"sync"
 )

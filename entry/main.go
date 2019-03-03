@@ -1,10 +1,10 @@
 package main
 
 import (
-	"20181022/crawler/saver"
-	"20181022/crawler/types"
-	"20181022/crawler/utils"
-	"20181022/crawler/worker"
+	"20181022/recruit-crawler/saver"
+	"20181022/recruit-crawler/types"
+	"20181022/recruit-crawler/utils"
+	"20181022/recruit-crawler/worker"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"

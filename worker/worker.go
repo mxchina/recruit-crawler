@@ -1,7 +1,7 @@
 package worker
 
 import (
-	"20181022/crawler/types"
+	"20181022/recruit-crawler/types"
 	"sync"
 )
 

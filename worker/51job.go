@@ -1,8 +1,8 @@
 package worker
 
 import (
-	"20181022/crawler/types"
-	"20181022/crawler/utils"
+	"20181022/recruit-crawler/types"
+	"20181022/recruit-crawler/utils"
 	"bufio"
 	bytes2 "bytes"
 	"github.com/PuerkitoBio/goquery"
