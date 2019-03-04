@@ -19,6 +19,7 @@ import (
 // 我搜索的是最近3天的关键字为“运维”的职位，实际差不多10页
 // 这里的20是随便取得，只要比实际大就行
 const pages = 20
+
 var infoSource51 = "51job"
 
 type Job51 struct{}
@@ -37,13 +38,15 @@ func (Job51) Fetch(wg *sync.WaitGroup) <-chan *[]byte {
 			// Request the HTML page.
 			res, err := http.Get(NewUrl(i))
 			if err != nil {
-				log.Fatal(err)
+				log.Printf("fetch err：%s", err.Error())
+				return
+			}
+			if res.StatusCode != 200 {
+				log.Printf("status code error: %s", res.Status)
+				return
 			}
 			defer res.Body.Close()
 
-			if res.StatusCode != 200 {
-				log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
-			}
 			bodyReader := bufio.NewReader(res.Body)
 
 			// transform encode any to utf-8
@@ -69,7 +72,7 @@ func (Job51) Parse(wg *sync.WaitGroup, from <-chan *[]byte, to chan<- types.JobI
 			// Load the HTML document
 			doc, err := goquery.NewDocumentFromReader(bytes2.NewReader(*bytes))
 			if err != nil {
-				log.Fatal(err)
+				log.Println("NewDocumentFromReader error：%s", err.Error())
 			}
 
 			items := doc.Find("#resultList.dw_table .el:not(.title)")
@@ -94,7 +97,7 @@ func (Job51) Parse(wg *sync.WaitGroup, from <-chan *[]byte, to chan<- types.JobI
 				city := s.Find(".t3").Text()
 
 				salary := s.Find(".t4").Text()
-				salaryMin, salaryMax := getSalaryInfo(salary)
+				salaryMin, salaryMax := GetSalaryInfo(salary)
 
 				updateDate := s.Find(".t5").Text()
 
@@ -125,7 +128,7 @@ func (Job51) Parse(wg *sync.WaitGroup, from <-chan *[]byte, to chan<- types.JobI
 	}()
 }
 
-func getSalaryInfo(s string) (min float64, max float64) {
+func GetSalaryInfo(s string) (min float64, max float64) {
 	// 51job上的薪资分为以下几种情况
 	//  6-8千/月      0.8-1.2万/月     10-15万/年
 	if s == "" {

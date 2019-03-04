@@ -50,6 +50,9 @@ func main() {
 	}
 }
 
+// 全局变量保存token
+var token string
+
 // ID: "wwf51b2091e9e0d51d",
 // Secret: "LxTHd5MOZU4H6bYijzTqnv_a1qBB9Luq7p3u7f4cT5I",
 // AppID:  "1000002",
@@ -60,8 +63,10 @@ type ChartAlarm struct {
 }
 
 func (c ChartAlarm) getSendUrl() string {
-	token := c.getNewToken()
-	fmt.Println("token：",token)
+	if token == "" {
+		token = c.getNewToken()
+	}
+	log.Println("token：", token)
 	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=%s", token)
 }
 
@@ -120,7 +125,7 @@ func (c ChartAlarm) SendText(content string) error {
 	sendUrl := c.getSendUrl()
 	bytesData, err := json.Marshal(myload)
 
-	fmt.Println("bytesData", string(bytesData))
+	log.Println("bytesData", string(bytesData))
 	if err != nil {
 		return err
 	}
@@ -140,14 +145,12 @@ func (c ChartAlarm) SendText(content string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("data：%s\n", string(data))
+
 	errCode := jsoniter.Get(data, "errcode").ToInt()
-	//byte数组直接转成string，优化内存
-	//str := (*string)(unsafe.Pointer(&respBytes))
+
 	if errCode == 0 {
 		return nil
 	} else {
 		return errors.New("errCode：" + strconv.Itoa(errCode))
 	}
 }
-

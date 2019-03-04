@@ -9,6 +9,11 @@ import (
 	"log"
 )
 
+const (
+	tableName = "job_info_yunwei"
+	MySQL_DSN = "root:Mx560205@tcp(132.232.29.36:3306)/zhaopin"
+)
+
 type Saver struct {
 	Db *sqlx.DB
 	Ch chan types.JobInfoDone
@@ -17,13 +22,6 @@ type Saver struct {
 func NewSaver(db *sqlx.DB, ch chan types.JobInfoDone) *Saver {
 	return &Saver{Db: db, Ch: ch}
 }
-
-var (
-//Db, err = sqlx.Open("mysql", "root:Mx560205@tcp(132.232.29.36:3306)/zhaopin")
-// 定义全局save channel，所有的需要存储的数据都往这里发
-//SaverChannel = CreateSaver()
-
-)
 
 func (s *Saver) Run() {
 
@@ -54,7 +52,7 @@ func (s *Saver) Run() {
 }
 
 func filterAndSave(job types.JobInfoDone, db *sqlx.DB) {
-	rows := db.QueryRow("SELECT count(1) FROM job_info WHERE company_name=? AND job_name=? AND salary=?", job.CompanyName, job.JobName, job.Salary)
+	rows := db.QueryRow("SELECT count(1) FROM "+tableName+" WHERE company_name=? AND job_name=? AND salary=?", job.CompanyName, job.JobName, job.Salary)
 	count := 0
 	err := rows.Scan(&count)
 	if err != nil {
@@ -69,7 +67,7 @@ func filterAndSave(job types.JobInfoDone, db *sqlx.DB) {
 			return
 		}
 		// 插入数据库前判断，如果工资大于10K，则发起告警。具体告警方式，可以用微信企业号或者其他？
-		if job.SalaryMax >= 10000 {
+		if job.SalaryMax >= 10 {
 			// 发送微信告警
 			log.Println("准备发送微信告警")
 			content := fmt.Sprintf("来源：%s\nCity：%s\nCompanyName：%s\nJobName：%s\nSalary：%s\nPositionURL：%s\ncreateDate：%s\nupdateDate：%s\n",
@@ -83,12 +81,14 @@ func filterAndSave(job types.JobInfoDone, db *sqlx.DB) {
 				job.UpdateDate)
 
 			err := utils.Chart.SendText(content)
-			log.Println("to send chart_alarm failed：", err.Error())
-			log.Println("failed content：", content)
+			if err != nil {
+				log.Println("to send chart_alarm failed：", err)
+				log.Println("failed content：", content)
+			}
 		}
 
 		log.Println("准备插入新数据")
-		_, err := db.Exec("INSERT INTO job_info(info_source,create_date,update_date,city,position_url,salary,salary_min,salary_max,company_name,job_name)VALUES (?,?,?,?,?,?,?,?,?,?)",
+		_, err := db.Exec("INSERT INTO "+tableName+"(info_source,create_date,update_date,city,position_url,salary,salary_min,salary_max,company_name,job_name)VALUES (?,?,?,?,?,?,?,?,?,?)",
 			job.InfoSource,
 			job.CreateDate,
 			job.UpdateDate,
@@ -98,7 +98,7 @@ func filterAndSave(job types.JobInfoDone, db *sqlx.DB) {
 			job.SalaryMin,
 			job.SalaryMax,
 			job.CompanyName,
-			job.JobName, )
+			job.JobName)
 		if err != nil {
 			log.Println("insert failed,", err)
 		}
